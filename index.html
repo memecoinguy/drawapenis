@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw a penis</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 10px;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .attribution {
+            font-size: 0.9em;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+
+
+        .canvas-container {
+            border: 3px solid #fff;
+            border-radius: 15px;
+            background-color: white;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        #drawingCanvas {
+            display: block;
+            cursor: crosshair;
+            border-radius: 12px;
+        }
+
+        .trace-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 800px;
+            height: 600px;
+            pointer-events: none;
+            border-radius: 12px;
+            background-image: url('drawapenis.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+            display: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: bold;
+            color: white;
+        }
+
+        input[type="color"] {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        input[type="range"] {
+            width: 100px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .primary-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .secondary-btn {
+            background: linear-gradient(45deg, #f44336, #da190b);
+            color: white;
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .secondary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+        }
+
+        .download-btn {
+            background: linear-gradient(45deg, #2196F3, #0b7dda);
+            color: white;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        }
+
+
+
+        .instructions {
+            max-width: 600px;
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+            line-height: 1.6;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .donation-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin-top: 20px;
+            text-align: center;
+            color: white;
+            max-width: 600px;
+        }
+
+        .github-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin-top: 20px;
+            text-align: center;
+            color: white;
+            max-width: 600px;
+        }
+
+        .wallet-address {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 10px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .github-link {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 10px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .github-link a {
+            color: #64b5f6;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .github-link a:hover {
+            color: #90caf9;
+            text-decoration: underline;
+        }
+
+        .copy-btn {
+            background: linear-gradient(45deg, #9C27B0, #7B1FA2);
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .github-btn {
+            background: linear-gradient(45deg, #333, #555);
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+            margin-top: 10px;
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .github-btn:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(45deg, #555, #777);
+        }
+
+        .trace-btn {
+            background: linear-gradient(45deg, #FF5722, #E64A19);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.3);
+        }
+
+        .trace-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 87, 34, 0.4);
+        }
+
+        .trace-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .opacity-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        #brushSizeValue, #opacityValue {
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Draw a penis</h1>
+        <div class="subtitle">Interactive penis Drawing Canvas</div>
+        <div class="attribution">Made by Meme Coin Guy</div>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label for="colorPicker">Color:</label>
+            <input type="color" id="colorPicker" value="#000000">
+        </div>
+
+        <div class="control-group">
+            <label for="brushSize">Brush Size:</label>
+            <input type="range" id="brushSize" min="1" max="50" value="5">
+            <span id="brushSizeValue">5</span>px
+        </div>
+
+        <div class="trace-controls">
+            <button class="trace-btn" id="traceToggle" onclick="toggleTrace()">Show Trace</button>
+            <div class="opacity-control" id="opacityControl" style="display: none;">
+                <label for="traceOpacity">Opacity:</label>
+                <input type="range" id="traceOpacity" min="0.1" max="1" step="0.1" value="0.3">
+                <span id="opacityValue">30%</span>
+            </div>
+        </div>
+
+        <button class="secondary-btn" onclick="clearCanvas()">Clear Canvas</button>
+        <button class="download-btn" onclick="downloadDrawing()">Download penis</button>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="drawingCanvas" width="800" height="600"></canvas>
+        <div class="trace-overlay" id="traceOverlay"></div>
+    </div>
+
+    <div class="instructions">
+        <p><strong>Instructions:</strong> Use your mouse to draw a penis! Click and drag to draw.
+        Adjust the color and brush size using the controls above.
+        When you're happy with your penis drawing, click "Download penis" to save it as an image.</p>
+        <p><strong>Trace Mode:</strong> Click "Show Trace" to overlay a penis image that you can trace over.
+        Adjust the opacity to make it easier to see your drawing underneath!</p>
+    </div>
+
+    <div class="github-section">
+        <h3>🔗 Open Source</h3>
+        <p>This project is open source! Check out the code, contribute, or report issues on GitHub.</p>
+        <div class="github-link">
+            <a href="https://github.com/memecoin_guy/drawapenis" target="_blank" rel="noopener noreferrer">
+                https://github.com/memecoin_guy/drawapenis
+            </a>
+        </div>
+        <a href="https://github.com/memecoin_guy/drawapenis" target="_blank" rel="noopener noreferrer" class="github-btn">
+            🐙 View on GitHub
+        </a>
+        <p style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">
+            Star the repo if you like the project! Contributions welcome.
+        </p>
+    </div>
+
+    <div class="donation-section">
+        <h3>💜 Support the Project</h3>
+        <p>Enjoying Draw a penis? Consider supporting Meme Coin Guy with a Solana donation!</p>
+        <div class="wallet-address" id="walletAddress">57auGsydHaCR8ZFLYdiW3pksnTpYaEQYriGbYM8xa9aW</div>
+        <button class="copy-btn" onclick="copyWalletAddress()">Copy Wallet Address</button>
+        <p style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">
+            Send SOL to support development and keep this project free!
+        </p>
+    </div>
+
+    <div class="donation-section">
+        <h3>🪙 Official Token</h3>
+        <p>Get the official Draw a penis token on Solana!</p>
+        <div class="wallet-address" id="tokenAddress">TBD</div>
+        <button class="copy-btn" onclick="copyTokenAddress()">Copy Contract Address</button>
+        <p style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">
+            Trade the official Draw a penis token and join the feline revolution!
+        </p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        const colorPicker = document.getElementById('colorPicker');
+        const brushSize = document.getElementById('brushSize');
+        const brushSizeValue = document.getElementById('brushSizeValue');
+        const traceOverlay = document.getElementById('traceOverlay');
+        const traceToggle = document.getElementById('traceToggle');
+        const traceOpacity = document.getElementById('traceOpacity');
+        const opacityValue = document.getElementById('opacityValue');
+        const opacityControl = document.getElementById('opacityControl');
+
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let traceVisible = false;
+
+        // Set up canvas
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        // Update brush size display
+        brushSize.addEventListener('input', function() {
+            brushSizeValue.textContent = this.value;
+        });
+
+        // Update trace opacity display
+        traceOpacity.addEventListener('input', function() {
+            const opacityPercent = Math.round(this.value * 100);
+            opacityValue.textContent = opacityPercent + '%';
+            if (traceVisible) {
+                traceOverlay.style.opacity = this.value;
+            }
+        });
+
+        // Mouse events for drawing
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events for mobile support
+        canvas.addEventListener('touchstart', handleTouch);
+        canvas.addEventListener('touchmove', handleTouch);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            lastX = e.clientX - rect.left;
+            lastY = e.clientY - rect.top;
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const currentX = e.clientX - rect.left;
+            const currentY = e.clientY - rect.top;
+
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.strokeStyle = colorPicker.value;
+            ctx.lineWidth = brushSize.value;
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(currentX, currentY);
+            ctx.stroke();
+
+            lastX = currentX;
+            lastY = currentY;
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' :
+                                            e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Reset to white background
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function downloadDrawing() {
+            // Create a temporary canvas with white background
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+
+            // Fill with white background
+            tempCtx.fillStyle = 'white';
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+            // Draw the original canvas on top
+            tempCtx.drawImage(canvas, 0, 0);
+
+            // Create download link
+            const link = document.createElement('a');
+            link.download = 'my-penis-drawing.png';
+            link.href = tempCanvas.toDataURL();
+            link.click();
+        }
+
+        function copyWalletAddress() {
+            const walletAddress = document.getElementById('walletAddress').textContent;
+            navigator.clipboard.writeText(walletAddress).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'linear-gradient(45deg, #9C27B0, #7B1FA2)';
+                }, 2000);
+            });
+        }
+
+        function copyTokenAddress() {
+            const tokenAddress = document.getElementById('tokenAddress').textContent;
+            navigator.clipboard.writeText(tokenAddress).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'linear-gradient(45deg, #9C27B0, #7B1FA2)';
+                }, 2000);
+            });
+        }
+
+        function toggleTrace() {
+            traceVisible = !traceVisible;
+
+            if (traceVisible) {
+                traceOverlay.style.display = 'block';
+                traceOverlay.style.opacity = traceOpacity.value;
+                traceToggle.textContent = 'Hide Trace';
+                opacityControl.style.display = 'flex';
+            } else {
+                traceOverlay.style.display = 'none';
+                traceToggle.textContent = 'Show Trace';
+                opacityControl.style.display = 'none';
+            }
+        }
+
+        // Initialize canvas with white background for better visibility
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    </script>
+</body>
+</html>
